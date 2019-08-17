@@ -9,15 +9,16 @@ import {
   hidePointsOutsideRegion,
   filterPoints,
   getIntersection,
+  dna,
 } from '../src';
 
 describe('dna', () => {
   test('matrix transforms', () => {
-    const points = new Float32Array([1, 0, 0, 1000, 1000]);
+    const points = dna([1, 0, 0, 1000, 1000]);
 
-    expect(transform(points, translate(100, 0))).toEqual(new Float32Array([1, 100, 0, 1100, 1000]));
+    expect(transform(points, translate(100, 0))).toEqual(dna([1, 100, 0, 1100, 1000]));
 
-    expect(transform(points, scale(2))).toEqual(new Float32Array([1, 0, 0, 2000, 2000]));
+    expect(transform(points, scale(2))).toEqual(dna([1, 0, 0, 2000, 2000]));
 
     // t r s
     const scaleAndTranslate = compose(
@@ -27,11 +28,11 @@ describe('dna', () => {
 
     const translatedPoints = transform(points, scaleAndTranslate);
 
-    expect(translatedPoints).toEqual(new Float32Array([1, 100, 150, 2100, 2150]));
+    expect(translatedPoints).toEqual(dna([1, 100, 150, 2100, 2150]));
 
     const invertedScaleAndTranslate = invert(scaleAndTranslate);
 
-    expect(transform(translatedPoints, invertedScaleAndTranslate)).toEqual(new Float32Array([1, 0, 0, 1000, 1000]));
+    expect(transform(translatedPoints, invertedScaleAndTranslate)).toEqual(dna([1, 0, 0, 1000, 1000]));
   });
 
   describe('DnaFactory', () => {
@@ -52,7 +53,7 @@ describe('dna', () => {
       ).toThrowError('Incomplete strand. 2 of 25');
     });
     test('point creation', () => {
-      expect(DnaFactory.point(100, 40)).toEqual(new Float32Array([1, 100, 40, 100, 40]));
+      expect(DnaFactory.point(100, 40)).toEqual(dna([1, 100, 40, 100, 40]));
     });
   });
 
@@ -60,7 +61,7 @@ describe('dna', () => {
     test('invalid compose should throw error (left side)', () => {
       expect(() =>
         compose(
-          new Float32Array([0, 1, 2]),
+          dna([0, 1, 2]),
           scale(1)
         )
       ).toThrowError('Transforms must be Mat3 as Float32Array');
@@ -70,7 +71,7 @@ describe('dna', () => {
       expect(() =>
         compose(
           scale(1),
-          new Float32Array([0, 1, 2])
+          dna([0, 1, 2])
         )
       ).toThrowError('Transforms must be Mat3 as Float32Array');
     });
@@ -78,17 +79,17 @@ describe('dna', () => {
     test('invalid compose should throw error (both sides)', () => {
       expect(() =>
         compose(
-          new Float32Array([0, 1, 2]),
-          new Float32Array([0, 1, 2])
+          dna([0, 1, 2]),
+          dna([0, 1, 2])
         )
       ).toThrowError('Transforms must be Mat3 as Float32Array');
     });
   });
 
   test('scale at origin', () => {
-    const points = new Float32Array([1, 0, 0, 1000, 1000]);
+    const points = dna([1, 0, 0, 1000, 1000]);
 
-    expect(transform(points, scaleAtOrigin(2, 500, 500))).toEqual(new Float32Array([1, -500, -500, 1500, 1500]));
+    expect(transform(points, scaleAtOrigin(2, 500, 500))).toEqual(dna([1, -500, -500, 1500, 1500]));
   });
 
   describe('hidePointsOutsideRegion', () => {
@@ -176,7 +177,7 @@ describe('dna', () => {
 
     test('two non intersecting boxes', () => {
       expect(getIntersection(DnaFactory.singleBox(100, 100, 0, 0), DnaFactory.singleBox(100, 100, 200, 200))).toEqual(
-        new Float32Array([0, 0, 0, 0, 0])
+        dna([0, 0, 0, 0, 0])
       );
     });
   });
