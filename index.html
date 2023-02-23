@@ -1,0 +1,40 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<div style="padding: 400px">
+  <h3>Before</h3>
+<div id="before"></div>
+  <h3>After</h3>
+<div id="after"></div>
+
+</div>
+<script type="module">
+
+  import { DnaFactory, transform } from "./src";
+  import { rotate, rotateDegrees } from "./src/rotate";
+
+  const box = DnaFactory.singleBox(100, 200, 0, 0);
+
+  const polygon = (strand) => {
+    const points = [
+      [strand[1], strand[2]],
+      [strand[1], strand[4]],
+      [strand[3], strand[4]],
+      [strand[3], strand[2]],
+    ];
+    return `<svg height="400" width="400" viewBox="-200 -200 400 400"><polygon fill="#000" points="${points.map((p) => p.join(',')).join(' ')}"></polygon></svg>`;
+  }
+
+  document.getElementById('before').innerHTML = polygon(box);
+  document.getElementById('after').innerHTML = polygon(transform(box, rotateDegrees(5)));
+
+</script>
+
+</body>
+</html>
