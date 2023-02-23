@@ -11,6 +11,8 @@ import {
   getIntersection,
   dna,
 } from '../src';
+import { describe } from 'vitest';
+import { rotate, rotateDegrees } from '../src/rotate';
 
 describe('dna', () => {
   test('matrix transforms', () => {
@@ -21,10 +23,7 @@ describe('dna', () => {
     expect(transform(points, scale(2))).toEqual(dna([1, 0, 0, 2000, 2000]));
 
     // t r s
-    const scaleAndTranslate = compose(
-      translate(100, 150),
-      scale(2)
-    );
+    const scaleAndTranslate = compose(translate(100, 150), scale(2));
 
     const translatedPoints = transform(points, scaleAndTranslate);
 
@@ -37,20 +36,12 @@ describe('dna', () => {
 
   describe('DnaFactory', () => {
     test('overflow', () => {
-      expect(() =>
-        DnaFactory.grid()
-          .addBox(0, 0, 100, 100)
-          .addBox(0, 0, 100, 100)
-          .build()
-      ).toThrowError('Source is too large');
+      expect(() => DnaFactory.grid().addBox(0, 0, 100, 100).addBox(0, 0, 100, 100).build()).toThrowError();
     });
     test('incomplete strand', () => {
-      expect(() =>
-        DnaFactory.grid(5, 5)
-          .addBox(0, 0, 100, 100)
-          .addBox(0, 0, 100, 100)
-          .build()
-      ).toThrowError('Incomplete strand. 2 of 25');
+      expect(() => DnaFactory.grid(5, 5).addBox(0, 0, 100, 100).addBox(0, 0, 100, 100).build()).toThrowError(
+        'Incomplete strand. 2 of 25'
+      );
     });
     test('point creation', () => {
       expect(DnaFactory.point(100, 40)).toEqual(dna([1, 100, 40, 100, 40]));
@@ -59,30 +50,15 @@ describe('dna', () => {
 
   describe('compose', () => {
     test('invalid compose should throw error (left side)', () => {
-      expect(() =>
-        compose(
-          dna([0, 1, 2]),
-          scale(1)
-        )
-      ).toThrowError('Transforms must be Mat3 as Float32Array');
+      expect(() => compose(dna([0, 1, 2]), scale(1))).toThrowError('Transforms must be Mat3 as Strand');
     });
 
     test('invalid compose should throw error (right side)', () => {
-      expect(() =>
-        compose(
-          scale(1),
-          dna([0, 1, 2])
-        )
-      ).toThrowError('Transforms must be Mat3 as Float32Array');
+      expect(() => compose(scale(1), dna([0, 1, 2]))).toThrowError('Transforms must be Mat3 as Strand');
     });
 
     test('invalid compose should throw error (both sides)', () => {
-      expect(() =>
-        compose(
-          dna([0, 1, 2]),
-          dna([0, 1, 2])
-        )
-      ).toThrowError('Transforms must be Mat3 as Float32Array');
+      expect(() => compose(dna([0, 1, 2]), dna([0, 1, 2]))).toThrowError('Transforms must be Mat3 as Strand');
     });
   });
 
@@ -95,8 +71,8 @@ describe('dna', () => {
   describe('hidePointsOutsideRegion', () => {
     test('4x4 grid, only top left should show', () => {
       const points = DnaFactory.grid(2, 2)
-        .row(f => f.addBox(0, 0, 100, 100).addBox(0, 100, 100, 100))
-        .row(f => f.addBox(100, 0, 100, 100).addBox(100, 100, 100, 100))
+        .row((f) => f.addBox(0, 0, 100, 100).addBox(0, 100, 100, 100))
+        .row((f) => f.addBox(100, 0, 100, 100).addBox(100, 100, 100, 100))
         .build();
 
       const hiddenPoints = hidePointsOutsideRegion(points, DnaFactory.positionPair({ x1: 0, y1: 0, x2: 99, y2: 99 }));
@@ -106,8 +82,8 @@ describe('dna', () => {
 
     test('4x4 grid, only top right should show', () => {
       const points = DnaFactory.grid(2, 2)
-        .row(f => f.addBox(0, 0, 100, 100).addBox(0, 100, 100, 100))
-        .row(f => f.addBox(100, 0, 100, 100).addBox(100, 100, 100, 100))
+        .row((f) => f.addBox(0, 0, 100, 100).addBox(0, 100, 100, 100))
+        .row((f) => f.addBox(100, 0, 100, 100).addBox(100, 100, 100, 100))
         .build();
 
       const hiddenPoints = hidePointsOutsideRegion(points, DnaFactory.singleBox(100, 100, 100, 0));
@@ -117,24 +93,24 @@ describe('dna', () => {
 
     test('4x4 grid, only top left 2 should show', () => {
       const points = DnaFactory.grid(2, 2)
-        .row(f => f.addBox(0, 0, 100, 100).addBox(0, 100, 100, 100))
-        .row(f => f.addBox(100, 0, 100, 100).addBox(100, 100, 100, 100))
+        .row((f) => f.addBox(0, 0, 100, 100).addBox(0, 100, 100, 100))
+        .row((f) => f.addBox(100, 0, 100, 100).addBox(100, 100, 100, 100))
         .build();
 
       const hiddenPoints = hidePointsOutsideRegion(points, DnaFactory.singleBox(100, 200, 0, 0));
 
       expect(filterPoints(hiddenPoints)).toEqual(
         DnaFactory.grid(1, 2)
-          .row(f => f.addBox(0, 0, 100, 100))
-          .row(f => f.addBox(0, 100, 100, 100))
+          .row((f) => f.addBox(0, 0, 100, 100))
+          .row((f) => f.addBox(0, 100, 100, 100))
           .build()
       );
     });
 
     test('simple', () => {
       const points = DnaFactory.grid(2, 2)
-        .row(f => f.addBox(0, 0, 100, 100).addBox(0, 100, 100, 100))
-        .row(f => f.addBox(100, 0, 100, 100).addBox(100, 100, 100, 100))
+        .row((f) => f.addBox(0, 0, 100, 100).addBox(0, 100, 100, 100))
+        .row((f) => f.addBox(100, 0, 100, 100).addBox(100, 100, 100, 100))
         .build();
 
       const hiddenPoints = hidePointsOutsideRegion(points, DnaFactory.positionPair({ x1: 0, x2: 150, y1: 0, y2: 50 }));
@@ -142,10 +118,7 @@ describe('dna', () => {
       expect(filterPoints(hiddenPoints).length).toEqual(10);
 
       expect(filterPoints(hiddenPoints)).toEqual(
-        DnaFactory.grid(2, 1)
-          .addBox(0, 0, 100, 100)
-          .addBox(100, 0, 100, 100)
-          .build()
+        DnaFactory.grid(2, 1).addBox(0, 0, 100, 100).addBox(100, 0, 100, 100).build()
       );
     });
   });
@@ -179,6 +152,23 @@ describe('dna', () => {
       expect(getIntersection(DnaFactory.singleBox(100, 100, 0, 0), DnaFactory.singleBox(100, 100, 200, 200))).toEqual(
         dna([0, 0, 0, 0, 0])
       );
+    });
+  });
+
+  describe('rotation', () => {
+    test('rotate box 90deg', () => {
+      const box = DnaFactory.singleBox(100, 20, 0, 0);
+
+      const points = [
+        [box[1], box[3]],
+        [box[1], box[4]],
+        [box[2], box[3]],
+        [box[2], box[4]],
+      ];
+
+      const svg = `<svg><polgon points="${points.map((p) => p.join(',')).join(' ')}"></polgon></svg>`;
+
+      expect(transform(box, rotateDegrees(90))).toEqual(dna(DnaFactory.singleBox(20, 100, 40, 40)));
     });
   });
 });

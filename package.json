@@ -1,33 +1,118 @@
 {
   "name": "@atlas-viewer/dna",
   "version": "0.3.1",
-  "main": "dist/umd/@atlas-viewer/dna.js",
-  "module": "lib/index.js",
-  "typings": "lib/index.d.ts",
-  "author": "Stephen Fraser <stephen.fraser@digirati.com>",
   "license": "MIT",
+  "main": "dist/bundle/cjs/index.js",
+  "module": "dist/bundle/esm/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/bundle/cjs/index.js",
+      "import": "./dist/bundle/esm/index.mjs",
+      "default": "./dist/index.umd.js"
+    },
+    "./compose": {
+      "import": "./dist/compose/esm/index.mjs",
+      "require": "./dist/compose/cjs/index.js"
+    },
+    "./identity": {
+      "import": "./dist/identity/esm/index.mjs",
+      "require": "./dist/identity/cjs/index.js"
+    },
+    "./invert": {
+      "import": "./dist/invert/esm/index.mjs",
+      "require": "./dist/invert/cjs/index.js"
+    },
+    "./mutate": {
+      "import": "./dist/mutate/esm/index.mjs",
+      "require": "./dist/mutate/cjs/index.js"
+    },
+    "./rotate": {
+      "import": "./dist/rotate/esm/index.mjs",
+      "require": "./dist/rotate/cjs/index.js"
+    },
+    "./scale": {
+      "import": "./dist/scale/esm/index.mjs",
+      "require": "./dist/scale/cjs/index.js"
+    },
+    "./scale-at-origin": {
+      "import": "./dist/scale-at-origin/esm/index.mjs",
+      "require": "./dist/scale-at-origin/cjs/index.js"
+    },
+    "./transform": {
+      "import": "./dist/transform/esm/index.mjs",
+      "require": "./dist/transform/cjs/index.js"
+    },
+    "./translate": {
+      "import": "./dist/translate/esm/index.mjs",
+      "require": "./dist/translate/cjs/index.js"
+    },
+    "./utility": {
+      "import": "./dist/utility/esm/index.mjs",
+      "require": "./dist/utility/cjs/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/index.d.ts"
+      ],
+      "compose": [
+        "dist/compose.d.ts"
+      ],
+      "identity": [
+        "dist/identity.d.ts"
+      ],
+      "invert": [
+        "dist/invert.d.ts"
+      ],
+      "mutate": [
+        "dist/mutate.d.ts"
+      ],
+      "rotate": [
+        "dist/rotate.d.ts"
+      ],
+      "scale": [
+        "dist/scale.d.ts"
+      ],
+      "scale-at-origin": [
+        "dist/scale-at-origin.d.ts"
+      ],
+      "transform": [
+        "dist/transform.d.ts"
+      ],
+      "translate": [
+        "dist/translate.d.ts"
+      ],
+      "utility": [
+        "dist/utility.d.ts"
+      ]
+    }
+  },
   "scripts": {
-    "build": "fesk-build --cjs --umd && tsc -p ./ --emitDeclarationOnly",
-    "start": "fesk-start --cjs --noServer",
-    "test": "jest",
-    "build-types": "tsc -p ./ --emitDeclarationOnly",
-    "prepare": "NODE_ENV=production fesk-build --cjs --umd && tsc -p ./ --emitDeclarationOnly"
+    "build": "node scripts/build.mjs",
+    "prepublishOnly": "node scripts/build.mjs && node scripts/validate.mjs",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.53.0",
+    "@typescript-eslint/parser": "^5.53.0",
+    "chalk": "^5.2.0",
+    "dts-bundle-generator": "^7.2.0",
+    "eslint": "^8.34.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "execa": "^7.0.0",
+    "prettier": "^2.8.4",
+    "terser": "^5.16.4",
+    "tslib": "^2.5.0",
+    "typescript": "^4.9.5",
+    "vite": "^4.1.4",
+    "vitest": "^0.28.5"
   },
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "@fesk/scripts": "^1.2.1",
-    "@types/jest": "^24.0.17",
-    "jest": "^24.9.0",
-    "ts-jest": "^24.0.2",
-    "typescript": "^3.5.3"
-  },
-  "files": [
-    "dist",
-    "lib"
-  ],
-  "fesk": {
-    "typescript": true
   }
 }
